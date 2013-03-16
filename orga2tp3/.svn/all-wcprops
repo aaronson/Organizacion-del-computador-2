@@ -1,0 +1,161 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/jpacosillo-orga2tp3/!svn/ver/25
+END
+macrosmodoprotegido.mac
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/jpacosillo-orga2tp3/!svn/ver/1/macrosmodoprotegido.mac
+END
+i386.h
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/jpacosillo-orga2tp3/!svn/ver/1/i386.h
+END
+mmu.c
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/jpacosillo-orga2tp3/!svn/ver/10/mmu.c
+END
+tareas.tsk
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/jpacosillo-orga2tp3/!svn/ver/1/tareas.tsk
+END
+isr.h
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/jpacosillo-orga2tp3/!svn/ver/11/isr.h
+END
+bochsrc
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/jpacosillo-orga2tp3/!svn/ver/1/bochsrc
+END
+mmu.h
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/jpacosillo-orga2tp3/!svn/ver/13/mmu.h
+END
+diskette.img
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/jpacosillo-orga2tp3/!svn/ver/22/diskette.img
+END
+tss.c
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/jpacosillo-orga2tp3/!svn/ver/21/tss.c
+END
+setear_tss.asm
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/jpacosillo-orga2tp3/!svn/ver/21/setear_tss.asm
+END
+pic.c
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/jpacosillo-orga2tp3/!svn/ver/1/pic.c
+END
+informe.tex
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/jpacosillo-orga2tp3/!svn/ver/24/informe.tex
+END
+kernel.asm
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/jpacosillo-orga2tp3/!svn/ver/25/kernel.asm
+END
+gdt.c
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/jpacosillo-orga2tp3/!svn/ver/17/gdt.c
+END
+tss.h
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/jpacosillo-orga2tp3/!svn/ver/12/tss.h
+END
+idt.c
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/jpacosillo-orga2tp3/!svn/ver/11/idt.c
+END
+a20.asm
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/jpacosillo-orga2tp3/!svn/ver/1/a20.asm
+END
+pic.h
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/jpacosillo-orga2tp3/!svn/ver/1/pic.h
+END
+gdt.h
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/jpacosillo-orga2tp3/!svn/ver/21/gdt.h
+END
+macrosmodoreal.mac
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/jpacosillo-orga2tp3/!svn/ver/1/macrosmodoreal.mac
+END
+idt.h
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/jpacosillo-orga2tp3/!svn/ver/1/idt.h
+END
+informe.pdf
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/jpacosillo-orga2tp3/!svn/ver/24/informe.pdf
+END
+sched.c
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/jpacosillo-orga2tp3/!svn/ver/21/sched.c
+END
+isr.asm
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/jpacosillo-orga2tp3/!svn/ver/25/isr.asm
+END
+sched.h
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/jpacosillo-orga2tp3/!svn/ver/15/sched.h
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/jpacosillo-orga2tp3/!svn/ver/14/Makefile
+END

@@ -1,0 +1,12 @@
+La siguiente es la linea de comando para compilar, deben agregar los archivos .asm que hayan creado.
+
+gcc shadow.c glm.c gltx.c trackball.c -o shadow -lGLU -lglut -lpthread
+
+Deben instalar las siguiente Bibliotecas
+
+Glut: glutg3-dev
+
+Xi: libxi-dev
+
+Xmu: libxmu-dev
+Para instalar las bibliotecas deben utilizar el comando: sudo apt-get install <nombre_bib> (ej: sudo apt-get install glutg3-dev)

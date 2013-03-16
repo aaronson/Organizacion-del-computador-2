@@ -1,0 +1,2 @@
+gcc shadow.c glm.c gltx.c trackball.c -o shadow -lGL -lGLU -lglut -lpthread
+

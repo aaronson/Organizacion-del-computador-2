@@ -1,0 +1,107 @@
+ 	\documentclass[a4paper,10pt]{article}
+	%\documentclass[a4paper,10pt]{scrartcl}
+ 	\usepackage[paper=a4paper, left=1.5cm, right=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+
+ 	\usepackage[utf8x]{inputenc}
+
+ 	\usepackage[spanish,activeacute]{babel}
+ 	
+ 	\usepackage{lastpage}
+	
+ 	
+ 	\usepackage{fancyhdr}
+ 	\pagestyle{fancy}
+ 	\lhead{Trabajo Práctico 2}
+ 	\rhead{Organización del Computador II - 1º Cuatrimestre de 2010}
+ 	\cfoot{\thepage\ de \pageref{LastPage}}
+ 	\renewcommand{\headrulewidth}{0.4pt}
+ 	\renewcommand{\footrulewidth}{0.4pt}
+ 	
+ 	
+ 	
+ 	\title{}
+ 	\author{}
+ 	\date{}
+ 	
+\pdfinfo{%
+/Title ()
+/Author ()
+/Creator ()
+/Producer ()
+/Subject ()
+/Keywords ()
+}
+ 	
+\begin{document}
+ 	
+\section{Introducci'on}
+
+En este trabajo nos ocupamos de hacer un pseudokernel que se encargara de efectuar ciertas funciones b'asicas para el correcto booteo de un procesador. Dado que esto ser'ia muy riesgoso de hacer en una PC propiamente dicha, usamos el emulador bochs para correrlo. El kernel se encarga de pasar a modo protegido, puesto que cuando el procesador se inicia lo hace en modo real, inicializa una GDT, crea una IDT que permita mostrar por pantalla las excepciones que se generen, habilita paginaci'on, toma interrupciones del teclado y del clock, y finalmente crea tareas y permite simular un scheduler que alterna entre ellas. 
+
+Para hacer todo esto nos basamos en los talleres dados en clase que nos permitieron efectuar los diferentes cambios al kernel de una manera gradual; esto se ve reflejado en la manera de encarar los ejercicios, los cuales aumentan en complejidad. Es importante remarcar que algunos ejercicios son bastante similares a lo visto en clase y por tanto su soluci'on es muy similar a la de aquellos.
+
+Este trabajo fue corrido con los elementos provistos por la materia, usando el emulador Bochs para correrlo. Para probar este TP, uno debe situarse en donde se encuentren los archivos del diskette y de configuraci'on del bochs y tipear $bochs -q$
+
+\section{Ejercicios}
+
+\subsection{Ejercicio 1}
+
+En este ejercicio debemos pasar a modo protegido. Como hacer esto as'i nom'as causar'ia un error, primero se deben crear entradas en la GDT, por lo menos dos (una para c'odigo y una para datos) de manera que los segmentos puedan tomar algun valor v'alido. Una vez creadas estas entradas, las cuales son de 4GB de tama'no y se solapan, tambi'en creamos un segmento de video al que asignamos la direcci'on 0xB8000 para poder escribir en pantalla f'acilmente.
+
+Una vez hecho esto podemos cambiar a modo protegido, esto lo hacemos colocando un 1 en el 'ultimo bit de cr0. Ya en modo protegido, podemos asignar los segmentos a los valores correspondientes que creamos en la GDT, e imprimimos por pantalla un mensaje que confirme que todo est'a andado como se supone
+
+\subsection{Ejercicio 2}
+
+Este ejercicio consiste en crear una IDT que pueda mostrar por pantalla cuando se produce una excepci'on. si bien no pod'iamos atender de manera correcta dichas excepciones, no nos faltaron instancias en las cuales dichos mensajes fueran exhibidos.
+
+Para esto debimos definir rutinas para las catorce excepciones, que simplemente se limitaban a imprimir por pantalla una leyenda que especifique qu'e tipo de excepci'on se produjo, luego lo 'unico que fue necesario fue cargar dicha IDT. Para probar que 'esta andaba correctamente contamos con varios m'etodos, a'un cuando no todos las excepciones son reproducibles, la m'as f'acil de observar es la que se produce al dividir por cero (se encuentra comentada en el c'odigo, de otra manera el kernel no andar'ia)
+
+\subsection{Ejercicio 3}
+
+En este ejercicio debemos activar paginaci'on. Para esto, debemos crear primero el 'arbol de p'aginas del kernel con identity mapping sobre las primeras 0x4000000 direcciones, colocando el directorio y las tablas donde es pedido. Luego, podemos habilitar el bit de paginaci'on, esto es, el primer bit de cr0, no sin antes haber colocado el directorio en cr3 para poder usar la paginaci'on. 
+Una vez hecho esto, podemos probar que la misma funciona, para ello cargamos un mensaje de nuestra pel'icula, en este caso tomado de la brillante cancion "Comfortably Numb" y lo imprimimos en pantalla.
+
+\subsection{Ejercicio 4}
+
+Para este ejercicio debemos profundizar la paginaci'on, esta vez permitiendo que las p'aginas sean mapeadas no s'olo con identity mapping sino de cualquier manera. Para esto, primero necesitamos crear diversas funciones que nos van a ayudar a paginar m'as adelante en el trabajo, ateni'endonos a las consignas pedidas en las mismas.
+
+Para las funciones que devuelven una p'agina libre, tanto de usuario como de kernel, consideramos que era mejor mantener dos variables globales que fuera inicializadas en las direcciones que queremos, y de tal manera cuando pedimos una p'agina nueva tomamos esa variable y luego la incrementamos el tama'no de una p'agina.
+
+La funci'on que inicializa un directorio de usuario se encarga de crear un nuevo 'arbol de p'aginas y devolver el nuevo cr3, pero en la consigna nos es pedido que se mapee con identity mappingo solo las primeras 0x200000 direcciones, por lo tanto, debemos asegurar que el resto est'a vac'io, esto lo hacemos colocando un 0 en esas entradas.
+
+En la funci'on mapear p'agina, dado un cr3 y una direcci'on virtual y una f'isica se encarga de mapear la f'isica a la virtual, esto lo logramos haciendo que las entradas en directorio y tabla de p'agina que corresponden a dicha direcci'on virtual apunten a la f'isica pasada por par'ametro. En caso de que lleguemos a encontrar que la tabla de p'aginas que nos corresponde no est'a inicializada, para evitar un page fault debemos inicializarla, esto lo hacemos colocando en ceros la misma; una vez hecho esto se puede pasar a actualizar los punteros y a colocar los bits de presente en las entradas que necesitamos. Exactamente lo inverso hacemos en la funci'on que unmapea la p'agina.
+
+Para testear que esto anda, inicializamos el directorio de usuario en kernel.asm, y luego mapeamos una direcci'on cualquiera a la de la memoria de video. Hecho esto, tomamos el nuevo cr3 que se cre'o al inicializar el directorio y escribimos en la posici'on virtual, lo que dado el mapeo nos lleva a escribir en la memoria de video. A modo de testeo, cambiamos el color de la letra W que es la primera impresa en nuestro mensaje, como esto funciona podemos unmapear y concluir esta parte.
+
+\subsection{Ejercicio 5}
+
+Aqu'i debimos crear varias rutinas de atenci'on de interrupciones, en primer lugar las que atienden al clock y al teclado, para la primera cont'abamos ya con la rutina provista, lo 'unico que debimos hacer fue asegurar que cuando se produc'ia la misma 'esta era llamada; as'i con cada tick se produce una interrupci'on y el reloj imprime en pantalla un pseudomovimiento para demostrar que est'a en funcionamiento. Para el teclado, debimos definir la rutina 33, que lee la tecla presionada. Si es un break, no hace nada, luego se fija si el scancode est'a en el rango que nos interesa (o sea, si es un n'umero de 0 a 9). En caso de que lo sea, procedemos a calcular su ASCII e imprimirlo en pantalla (como esta rutina se ve alterada por lo pedido en el ejercicio 7, la respuesta a la entrada de n'umeros de 1 a 8 no es la que pide este ejercicio).
+
+Las otras dos interrupciones pedidas simplemente nos requer'ian devolver un n'umero en eax, por lo que no causaron mayores inconvenientes.
+
+\subsection{Ejercicio 6}
+
+En este ejercicio deb'iamos crear las condiciones necesarias para agregar una nueva tarea (IDLE) y luego saltar a ella. Si solamente hubi'esemos creado las entradas necesarias para IDLE, esto romper'ia ya que el procesador no sabr'ia qu'e hacer al guardar la tarea actual, es por esto que debemos crear dos entradas en la GDT, una que guarde la informaci'on de la tarea actual y otra que guarde la de la IDLE. Para la tarea actual s'olo creamos las condiciones necesarias para que el procesador guarde la informaci'on, no est'a pensado para que luego se pueda saltar a la misma, a diferencia de la IDLE.
+
+Para hacer esto nos colocamos tanto en una entrada libre de la GDT como del arreglo de TSS, y colocamos la informaci'on necesaria, sabiendo que necesitamos pedir una p'agina libre nueva para que haga las veces de pila de la tarea IDLE, la informaci'on la completamos secuencialmente con los datos exigidos por la consigna.
+
+Una vez hecho esto, cargamos en el task register la tarea actual, y saltamos al selector de la IDLE con un offset cualquiera, el procesador interpreta que como es una entrada de tarea, debe ejecutarla.
+
+\subsection{Ejercicio 7}
+
+Para este ejercicio se nos ped'ia crear una nueva tarea asignada a una interrupci'on de teclado (o sea, que se active cuando se presiona una tecla) y adem'as crear un scheduler que alterne entre las tareas que se encuentran en un arreglo de tareas que contiene las direcciones de la GDT a las cuales saltar. Para lograr esto, primero tuvimos que alterar la interrupci'on de teclado, ya que la rutina a ejecutar al presionar de 1 a 8 es diferente, sabiendo que los scancodes son consecutivos, podemos obtener la posici'on de memoria en la cual comienza el c'odigo que debe ejecutar la nueva tarea simplemente restando 2 (o sea, obteniendo el n'umero verdadero) y shifteando 0x1000 (tama'no de una p'agina), sumando ese resultado a una base de 0x13000 que es donde empiezan los c'odigos. Una vez encontrado el c'odigo de inicio, solo basta llamar a la funci'on crearproceso con dicho dato como par'ametro. 
+
+Esta funci'on necesita crear una nueva entrada en la GDT para la tarea, una nueva TSS y adem'as asegurarse que esta tarea tiene todos los recursos que necesita, para esto primero debimos crear un nuevo directorio de p'aginas de usuario, y crear p'aginas libres para la pila y el c'odigo, luego mapeamos estos mismos y copiamos el c'odigo a la posici'on pedida (o sea, 0 en direcci'on lineal). Una vez hecho esto, podemos setear los datos en la GDT y en una nueva TSS, esto lo hacemos en assembler de manera similar a como lo hicimos para IDLE.
+
+Luego nos toca crear un scheduler que se encargue de alternar entre las tareas que se encuentran en el arreglo de tareas (esto es importante de remarcar, puesto que tanto la tarea inicial y la tarea IDLE no se encuentran en el mismo sino que est'an en sus TSS propios). Para hacer esto contamos con la funci'on obtenerpid, que devuelve la posici'on en el arreglo de tareas de la actual, para esto lee el task register y busca en todo el arreglo un valor igual a 'este que indica el segmento en la GDT. Tambi'en tenemos la funci'on proximoindice que devuelve el 'indice de la GDT de la pr'oxima tarea a ejecutar, pero adem'as lo usamos para saber si es necesario saltar, en los casos l'imites en los que no hay que saltar esta funci'on devuelve 0, y el scheduler compara el resultado con 0 y termina la interrupci'on si obtiene este n'umero.
+
+Nos dimos cuenta debuggeando que la interrupci'on 88 era llamada dentro del c'odigo de las tareas que creamos, y, dado que se nos pidi'o que asign'aramos el resultado de esta interrupici'on al resultado de obtenerpid, concluimos que esto lo usaba para determinar en qu'e porci'on de la memoria de video iba a escribir, esto explica por qu'e presionando n'umeros se obtienen cambios en la imagen que son secuenciales.
+
+Es importante aclarar que, a pesar de haber notado esto, y de haber consultado tanto con Cristian como con Jorge sobre las posibles causas, no conseguimos determinar por qu'e luego de cada interrupci'on, lo impreso en la memoria de video cambia el color del fondo, pero el ASCII que deber'ia tener siempre se encuentra en 0, por lo tanto nunca aparece ning'un texto. Esto solo lo notamos luego de cambiar el fondo negro por uno verde, el cual dejamos de esta manera para que el efecto causado por las tareas se note. Sin embargo, sabemos que se accede de manera correcta al c'odigo provisto por la c'atedra, y que el scheduler funciona correctamente y como tal alterna una y otra vez entre las tareas del arreglo.
+
+\section{Conclusiones}
+
+A lo largo de este TP conseguimos entender mejor qu'e sucede cuando se inicia un procesador, pudimos realizar sin mayores problemas el salto a modo protegido y dentro del mismo conseguimos llevar a cabo ciertos procedimientos b'asicos que, a mucha mayor escala, son los aplicados por todos los kernels al bootear; esto obviamente es de suma importancia, porque ahora podemos entender mejor ciertos procesos de un kernel, adem'as entender cu'ales son las causas de las excepciones que se producen en un procesador, como por ejemplo saber por qu'e se produce un segmentation fault al codear. 
+\end{document}
+
+
